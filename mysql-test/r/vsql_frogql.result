@@ -1,0 +1,34 @@
+INSTALL EXTENSION vsql_frogql;
+# Register the database mapping
+SELECT frogql_register_database('disney', '/home/maxdemarzi/vsql-frogql/examples/disney.gdb');
+frogql_register_database('disney', '/home/maxdemarzi/vsql-frogql/examples/disney.gdb')
+OK
+# Basic test (relationship traversal)
+SELECT frogql_traverse('disney', 'MATCH (t1:characters)<-[name:NAME]-(t2:director) RETURN t1.song, t2.director LIMIT 3');
+frogql_traverse('disney', 'MATCH (t1:characters)<-[name:NAME]-(t2:director) RETURN t1.song, t2.director LIMIT 3')
+[["Some Day My Prince Will Come","David Hand"],["When You Wish upon a Star","Ben Sharpsteen"],[null,"full credits"]]
+# Extract plain string test
+SELECT JSON_VALUE(CONVERT(frogql_traverse('disney', 'MATCH (t1:characters)<-[name:NAME]-(t2:director) RETURN t1.song, t2.director LIMIT 3') USING utf8mb4), '$[0][0]') AS song_name;
+song_name
+Some Day My Prince Will Come
+# Relational JOIN test
+SELECT directors.born, graph.song
+FROM (
+SELECT 'David Hand' AS director, 1900 AS born
+UNION ALL
+SELECT 'Ben Sharpsteen' AS director, 1895 AS born
+) AS directors
+JOIN JSON_TABLE(
+CONVERT(frogql_traverse('disney', 'MATCH (t1:characters)<-[name:NAME]-(t2:director) RETURN t1.song, t2.director') USING utf8mb4),
+'$[*]' COLUMNS(
+song VARCHAR(255) PATH '$[0]',
+director VARCHAR(255) PATH '$[1]'
+  )
+) AS graph ON directors.director = graph.director
+ORDER BY directors.born, graph.song;
+born	song
+1895	Baby Mine
+1895	When You Wish upon a Star
+1900	Love Is a Song
+1900	Some Day My Prince Will Come
+UNINSTALL EXTENSION vsql_frogql;

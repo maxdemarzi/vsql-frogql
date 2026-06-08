@@ -1,0 +1,29 @@
+INSTALL EXTENSION vsql_frogql;
+
+--echo # Register the database mapping
+SELECT frogql_register_database('disney', '/home/maxdemarzi/vsql-frogql/examples/disney.gdb');
+
+--echo # Basic test (relationship traversal)
+SELECT frogql_traverse('disney', 'MATCH (t1:characters)<-[name:NAME]-(t2:director) RETURN t1.song, t2.director LIMIT 3');
+
+--echo # Extract plain string test
+SELECT JSON_VALUE(CONVERT(frogql_traverse('disney', 'MATCH (t1:characters)<-[name:NAME]-(t2:director) RETURN t1.song, t2.director LIMIT 3') USING utf8mb4), '$[0][0]') AS song_name;
+
+--echo # Relational JOIN test
+SELECT directors.born, graph.song
+FROM (
+  SELECT 'David Hand' AS director, 1900 AS born
+  UNION ALL
+  SELECT 'Ben Sharpsteen' AS director, 1895 AS born
+) AS directors
+JOIN JSON_TABLE(
+  CONVERT(frogql_traverse('disney', 'MATCH (t1:characters)<-[name:NAME]-(t2:director) RETURN t1.song, t2.director') USING utf8mb4),
+  '$[*]' COLUMNS(
+    song VARCHAR(255) PATH '$[0]',
+    director VARCHAR(255) PATH '$[1]'
+  )
+) AS graph ON directors.director = graph.director
+ORDER BY directors.born, graph.song;
+
+UNINSTALL EXTENSION vsql_frogql;
+

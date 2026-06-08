@@ -1,0 +1,7 @@
+{
+  "name": "vsql_frogql",
+  "version": "0.1.0",
+  "description": "frogQL graph database engine bridge for VillageSQL",
+  "author": "maxdemarzi",
+  "license": "GPL-2.0"
+}

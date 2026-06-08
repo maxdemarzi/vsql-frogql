@@ -1,0 +1,21 @@
+Database File                                      | Nodes      | Edges     
+----------------------------------------------------------------------------
+disney.gdb                                         | 1633       | 771       
+financial_financial_management.gdb                 | 1435       | 0         
+financial_fraud_detection.gdb                      | 14550      | 31564     
+financial_payment.gdb                              | 8420       | 0         
+hockey.gdb                                         | 19035      | 70264     
+information_data_lineage.gdb                       | 490        | 520       
+information_technology_identity_and_access_management.gdb | 2045       | 923       
+information_technology_iot.gdb                     | 1410       | 1199      
+information_technology_it_asset_management.gdb     | 815        | 175       
+knowledge_general_knowledge.gdb                    | 3700       | 12643     
+knowledge_graph_geography.gdb                      | 1100       | 7116      
+manufacturing_bombill_of_materials.gdb             | 1500       | 2248      
+manufacturing_production_process.gdb               | 1030       | 0         
+moivelens.gdb                                      | 5000       | 0         
+soccer_2016.gdb                                    | 4124       | 2830      
+social_network_recommendation.gdb                  | 3685       | 0         
+social_network_twitter.gdb                         | 8450       | 0         
+student_loan.gdb                                   | 5031       | 4029      
+world.gdb                                          | 4552       | 4312      

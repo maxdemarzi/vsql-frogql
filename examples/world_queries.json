@@ -1,0 +1,1131 @@
+[
+  {
+    "question": "Register the database",
+    "sql": "SELECT frogql_register_database('world', '/home/maxdemarzi/vsql-frogql/examples/world.gdb')",
+    "output": [
+      [
+        "frogql_register_database('world', '/home/maxdemarzi/vsql-frogql/examples/world.gdb')"
+      ],
+      [
+        "OK"
+      ]
+    ]
+  },
+  {
+    "question": "Which country has the shortest life expectancy?",
+    "sql": "SELECT graph.Name FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (country:Country) RETURN country.Name AS Name ORDER BY country.LifeExpectancy LIMIT 1') USING utf8mb4), '$[*]' COLUMNS(Name INT PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (country:Country) RETURN country.Name AS Name ORDER BY country.LifeExpectancy LIMIT 1')",
+    "difficulty": "easy",
+    "output": [
+      [
+        "Name"
+      ],
+      [
+        null
+      ]
+    ]
+  },
+  {
+    "question": "List any five countries which use English as an official language.",
+    "sql": "SELECT graph.Name FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE (t2.Language = ''English'' AND t2.IsOfficial = ''T'') RETURN t1.Name LIMIT 5') USING utf8mb4), '$[*]' COLUMNS(Name VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE (t2.Language = ''English'' AND t2.IsOfficial = ''T'') RETURN t1.Name LIMIT 5')",
+    "difficulty": "medium",
+    "output": []
+  },
+  {
+    "question": "Calculate the average population per city in Karnataka district.",
+    "sql": "SELECT graph.Population FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (city:City) WHERE city.District = ''Karnataka'' RETURN avg(city.Population)') USING utf8mb4), '$[*]' COLUMNS(Population DOUBLE PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (city:City) WHERE city.District = ''Karnataka'' RETURN avg(city.Population)')",
+    "difficulty": "easy",
+    "output": [
+      [
+        "Population"
+      ],
+      [
+        377438.8823529412
+      ]
+    ]
+  },
+  {
+    "question": "List the languages used in the USA.",
+    "sql": "SELECT graph.Language FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (countrylanguage:CountryLanguage) WHERE countrylanguage.CountryCode = ''USA'' RETURN countrylanguage.Language AS Language') USING utf8mb4), '$[*]' COLUMNS(Language INT PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (countrylanguage:CountryLanguage) WHERE countrylanguage.CountryCode = ''USA'' RETURN countrylanguage.Language AS Language')",
+    "difficulty": "easy",
+    "output": []
+  },
+  {
+    "question": "How many countries use Portuguese?",
+    "sql": "SELECT graph.sumCASE FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (countrylanguage:CountryLanguage) RETURN sum(CASE WHEN countrylanguage.Language = ''Portuguese'' THEN 1 ELSE 0 END)') USING utf8mb4), '$[*]' COLUMNS(sumCASE INT PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (countrylanguage:CountryLanguage) RETURN sum(CASE WHEN countrylanguage.Language = ''Portuguese'' THEN 1 ELSE 0 END)')",
+    "difficulty": "easy",
+    "output": [
+      [
+        "sumCASE"
+      ],
+      [
+        0
+      ]
+    ]
+  },
+  {
+    "question": "How many cities are there in England?",
+    "sql": "SELECT graph.ID FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (city:City) WHERE city.District = ''England'' RETURN count(city.ID)') USING utf8mb4), '$[*]' COLUMNS(ID INT PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (city:City) WHERE city.District = ''England'' RETURN count(city.ID)')",
+    "difficulty": "easy",
+    "output": [
+      [
+        "ID"
+      ],
+      [
+        71
+      ]
+    ]
+  },
+  {
+    "question": "What is the capital city and population of San Marino?",
+    "sql": "SELECT graph.Capital, graph.Population FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:City) WHERE t1.Name = ''San Marino'' RETURN t1.Capital, t2.Population') USING utf8mb4), '$[*]' COLUMNS(Capital VARCHAR(255) PATH '$[0]', Population INT PATH '$[1]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:City) WHERE t1.Name = ''San Marino'' RETURN t1.Capital, t2.Population')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "Capital",
+        "Population"
+      ],
+      [
+        3171,
+        4802
+      ],
+      [
+        3171,
+        2294
+      ]
+    ]
+  },
+  {
+    "question": "List the languages used in Turkmenistan.",
+    "sql": "SELECT graph.Language FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE t1.Name = ''Turkmenistan'' RETURN t2.Language') USING utf8mb4), '$[*]' COLUMNS(Language INT PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE t1.Name = ''Turkmenistan'' RETURN t2.Language')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "Language"
+      ],
+      [
+        null
+      ]
+    ]
+  },
+  {
+    "question": "List any five countries which use English as an official language.",
+    "sql": "SELECT graph.Name FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE (t2.Language = ''English'' AND t2.IsOfficial = ''T'') RETURN t1.Name LIMIT 5') USING utf8mb4), '$[*]' COLUMNS(Name VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE (t2.Language = ''English'' AND t2.IsOfficial = ''T'') RETURN t1.Name LIMIT 5')",
+    "difficulty": "medium",
+    "output": []
+  },
+  {
+    "question": "Provide the name, located country, and life expectancy of the most populated city",
+    "sql": "SELECT graph.Name, graph.Code, graph.LifeExpectancy FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:City) RETURN t2.Name, t1.Code, t1.LifeExpectancy ORDER BY t2.Population DESC LIMIT 1') USING utf8mb4), '$[*]' COLUMNS(Name VARCHAR(255) PATH '$[0]', Code VARCHAR(255) PATH '$[1]', LifeExpectancy VARCHAR(255) PATH '$[2]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:City) RETURN t2.Name, t1.Code, t1.LifeExpectancy ORDER BY t2.Population DESC LIMIT 1')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "Name",
+        "Code",
+        "LifeExpectancy"
+      ],
+      [
+        "Mumbai (Bombay)",
+        "IND",
+        62.5
+      ]
+    ]
+  },
+  {
+    "question": "List the district name of the city with the smallest population.",
+    "sql": "SELECT graph.District FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (city:City) RETURN city.District AS District ORDER BY city.Population LIMIT 1') USING utf8mb4), '$[*]' COLUMNS(District VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (city:City) RETURN city.District AS District ORDER BY city.Population LIMIT 1')",
+    "difficulty": "easy",
+    "output": [
+      [
+        "District"
+      ],
+      [
+        "–"
+      ]
+    ]
+  },
+  {
+    "question": "In which continent does the country with the smallest surface area belongs?",
+    "sql": "SELECT graph.Continent FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (country:Country) RETURN country.Continent AS Continent ORDER BY country.SurfaceArea LIMIT 1') USING utf8mb4), '$[*]' COLUMNS(Continent INT PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (country:Country) RETURN country.Continent AS Continent ORDER BY country.SurfaceArea LIMIT 1')",
+    "difficulty": "easy",
+    "output": [
+      [
+        "Continent"
+      ],
+      [
+        null
+      ]
+    ]
+  },
+  {
+    "question": "Who is the head of the state where the most crowded city belongs?",
+    "sql": "SELECT graph.HeadOfState FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:City) RETURN t1.HeadOfState ORDER BY t2.Population DESC LIMIT 1') USING utf8mb4), '$[*]' COLUMNS(HeadOfState VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:City) RETURN t1.HeadOfState ORDER BY t2.Population DESC LIMIT 1')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "HeadOfState"
+      ],
+      [
+        "Kocheril Raman Narayanan"
+      ]
+    ]
+  },
+  {
+    "question": "Among the countries that officially use the English language, what country has the highest capital?",
+    "sql": "SELECT graph.Code FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE (t2.Language = ''English'' AND t2.IsOfficial = ''T'') RETURN t1.Code ORDER BY t1.Capital DESC LIMIT 1') USING utf8mb4), '$[*]' COLUMNS(Code VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE (t2.Language = ''English'' AND t2.IsOfficial = ''T'') RETURN t1.Code ORDER BY t1.Capital DESC LIMIT 1')",
+    "difficulty": "medium",
+    "output": []
+  },
+  {
+    "question": "List down the cities that belong to the country with a life expectancy of 66.4.",
+    "sql": "SELECT graph.Name FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:City) WHERE t1.LifeExpectancy = 66.4 RETURN t2.Name') USING utf8mb4), '$[*]' COLUMNS(Name VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:City) WHERE t1.LifeExpectancy = 66.4 RETURN t2.Name')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "Name"
+      ],
+      [
+        "Yerevan"
+      ],
+      [
+        "Gjumri"
+      ],
+      [
+        "Vanadzor"
+      ]
+    ]
+  },
+  {
+    "question": "Give the head of the state of the country with the lowest percentage use of English as their language.",
+    "sql": "SELECT graph.HeadOfState FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE t2.Language = ''English'' RETURN t1.HeadOfState ORDER BY t2.Percentage LIMIT 1') USING utf8mb4), '$[*]' COLUMNS(HeadOfState VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE t2.Language = ''English'' RETURN t1.HeadOfState ORDER BY t2.Percentage LIMIT 1')",
+    "difficulty": "medium",
+    "output": []
+  },
+  {
+    "question": "What is the surface area of the country where Sutton Coldfield city belongs?",
+    "sql": "SELECT graph.SurfaceArea FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:City) WHERE t2.Name = ''Sutton Coldfield'' RETURN t1.SurfaceArea') USING utf8mb4), '$[*]' COLUMNS(SurfaceArea VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:City) WHERE t2.Name = ''Sutton Coldfield'' RETURN t1.SurfaceArea')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "SurfaceArea"
+      ],
+      [
+        242900.0
+      ]
+    ]
+  },
+  {
+    "question": "List down the languages of the countries that have population below 8000.",
+    "sql": "SELECT graph.Language FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE t1.Population < 8000 RETURN t2.Language') USING utf8mb4), '$[*]' COLUMNS(Language INT PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE t1.Population < 8000 RETURN t2.Language')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "Language"
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ]
+    ]
+  },
+  {
+    "question": "Give the cities and district names that belong to the country with Hajastan as its local name.",
+    "sql": "SELECT graph.Name, graph.District FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:City) WHERE t1.LocalName = ''Hajastan'' RETURN t2.Name, t2.District') USING utf8mb4), '$[*]' COLUMNS(Name VARCHAR(255) PATH '$[0]', District VARCHAR(255) PATH '$[1]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:City) WHERE t1.LocalName = ''Hajastan'' RETURN t2.Name, t2.District')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "Name",
+        "District"
+      ],
+      [
+        "Yerevan",
+        "Yerevan"
+      ],
+      [
+        "Gjumri",
+        "Širak"
+      ],
+      [
+        "Vanadzor",
+        "Lori"
+      ]
+    ]
+  },
+  {
+    "question": "How many languages are used in Cyprus?",
+    "sql": "SELECT graph.sumCASE FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) RETURN sum(CASE WHEN t1.Name = ''Cyprus'' THEN 1 ELSE 0 END)') USING utf8mb4), '$[*]' COLUMNS(sumCASE INT PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) RETURN sum(CASE WHEN t1.Name = ''Cyprus'' THEN 1 ELSE 0 END)')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "sumCASE"
+      ],
+      [
+        1
+      ]
+    ]
+  },
+  {
+    "question": "Provide the language used by the people of Belize.",
+    "sql": "SELECT graph.Language FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE t1.Name = ''Belize'' RETURN t2.Language') USING utf8mb4), '$[*]' COLUMNS(Language INT PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE t1.Name = ''Belize'' RETURN t2.Language')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "Language"
+      ],
+      [
+        null
+      ]
+    ]
+  },
+  {
+    "question": "List down the districts belong to the country headed by Adolf Ogi.",
+    "sql": "SELECT graph.District FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:City) WHERE t1.HeadOfState = ''Adolf Ogi'' RETURN t2.District') USING utf8mb4), '$[*]' COLUMNS(District VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:City) WHERE t1.HeadOfState = ''Adolf Ogi'' RETURN t2.District')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "District"
+      ],
+      [
+        "Zürich"
+      ],
+      [
+        "Geneve"
+      ],
+      [
+        "Basel-Stadt"
+      ],
+      [
+        "Bern"
+      ],
+      [
+        "Vaud"
+      ]
+    ]
+  },
+  {
+    "question": "Who is the head of the country where Santa Catarina district belongs?",
+    "sql": "SELECT graph.HeadOfState FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:City) WHERE t2.District = ''Santa Catarina'' RETURN t1.HeadOfState') USING utf8mb4), '$[*]' COLUMNS(HeadOfState VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:City) WHERE t2.District = ''Santa Catarina'' RETURN t1.HeadOfState')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "HeadOfState"
+      ],
+      [
+        "Fernando Henrique Cardoso"
+      ],
+      [
+        "Fernando Henrique Cardoso"
+      ],
+      [
+        "Fernando Henrique Cardoso"
+      ],
+      [
+        "Fernando Henrique Cardoso"
+      ],
+      [
+        "Fernando Henrique Cardoso"
+      ],
+      [
+        "Fernando Henrique Cardoso"
+      ],
+      [
+        "Fernando Henrique Cardoso"
+      ],
+      [
+        "Fernando Henrique Cardoso"
+      ],
+      [
+        "Fernando Henrique Cardoso"
+      ],
+      [
+        "Fernando Henrique Cardoso"
+      ]
+    ]
+  },
+  {
+    "question": "What country declared its independence in 1994?",
+    "sql": "SELECT graph.Name FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (country:Country) WHERE country.IndepYear = 1994 RETURN country.Name AS Name') USING utf8mb4), '$[*]' COLUMNS(Name INT PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (country:Country) WHERE country.IndepYear = 1994 RETURN country.Name AS Name')",
+    "difficulty": "easy",
+    "output": [
+      [
+        "Name"
+      ],
+      [
+        null
+      ]
+    ]
+  },
+  {
+    "question": "List all the countries in Asia.",
+    "sql": "SELECT graph.Name FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (country:Country) WHERE country.Continent = ''Asia'' RETURN country.Name AS Name') USING utf8mb4), '$[*]' COLUMNS(Name INT PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (country:Country) WHERE country.Continent = ''Asia'' RETURN country.Name AS Name')",
+    "difficulty": "easy",
+    "output": [
+      [
+        "Name"
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ]
+    ]
+  },
+  {
+    "question": "What country in Asia has the largest gross national product(GNP)?",
+    "sql": "SELECT graph.Name FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (country:Country) WHERE country.Continent = ''Asia'' RETURN country.Name AS Name ORDER BY country.GNP DESC LIMIT 1') USING utf8mb4), '$[*]' COLUMNS(Name INT PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (country:Country) WHERE country.Continent = ''Asia'' RETURN country.Name AS Name ORDER BY country.GNP DESC LIMIT 1')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "Name"
+      ],
+      [
+        null
+      ]
+    ]
+  },
+  {
+    "question": "How many cities are in the Philippines?",
+    "sql": "SELECT graph.ID FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (city:City) WHERE city.Name = ''PHL'' RETURN count(city.ID)') USING utf8mb4), '$[*]' COLUMNS(ID INT PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (city:City) WHERE city.Name = ''PHL'' RETURN count(city.ID)')",
+    "difficulty": "easy",
+    "output": [
+      [
+        "ID"
+      ],
+      [
+        0
+      ]
+    ]
+  },
+  {
+    "question": "What is the local name of Ukraine that they are also known for?",
+    "sql": "SELECT graph.LocalName FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (country:Country) WHERE country.Name = ''Ukraine'' RETURN country.LocalName AS LocalName') USING utf8mb4), '$[*]' COLUMNS(LocalName INT PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (country:Country) WHERE country.Name = ''Ukraine'' RETURN country.LocalName AS LocalName')",
+    "difficulty": "easy",
+    "output": [
+      [
+        "LocalName"
+      ],
+      [
+        null
+      ]
+    ]
+  },
+  {
+    "question": "How many countries have Socialistic Republic form of government?",
+    "sql": "SELECT graph.Code FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (country:Country) WHERE country.GovernmentForm = ''Socialistic Republic'' RETURN count(country.Code)') USING utf8mb4), '$[*]' COLUMNS(Code INT PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (country:Country) WHERE country.GovernmentForm = ''Socialistic Republic'' RETURN count(country.Code)')",
+    "difficulty": "easy",
+    "output": [
+      [
+        "Code"
+      ],
+      [
+        3
+      ]
+    ]
+  },
+  {
+    "question": "What is the form of government that the city of Manila has?",
+    "sql": "SELECT graph.GovernmentForm FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:City) WHERE t2.Name = ''Manila'' RETURN t1.GovernmentForm') USING utf8mb4), '$[*]' COLUMNS(GovernmentForm VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:City) WHERE t2.Name = ''Manila'' RETURN t1.GovernmentForm')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "GovernmentForm"
+      ],
+      [
+        "Republic"
+      ]
+    ]
+  },
+  {
+    "question": "List all the languages used in Europe.",
+    "sql": "SELECT graph.Language FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE t1.Continent = ''Europe'' RETURN t2.Language') USING utf8mb4), '$[*]' COLUMNS(Language INT PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE t1.Continent = ''Europe'' RETURN t2.Language')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "Language"
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ],
+      [
+        null
+      ]
+    ]
+  },
+  {
+    "question": "Who is the head of state of the country where the city of Pyongyang is under?",
+    "sql": "SELECT graph.HeadOfState FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:City) WHERE t2.Name = ''Pyongyang'' RETURN t1.HeadOfState') USING utf8mb4), '$[*]' COLUMNS(HeadOfState VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:City) WHERE t2.Name = ''Pyongyang'' RETURN t1.HeadOfState')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "HeadOfState"
+      ],
+      [
+        "Kim Jong-il"
+      ]
+    ]
+  },
+  {
+    "question": "How many unofficial languages are used in Italy?",
+    "sql": "SELECT graph.sumCASE FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE t1.Name = ''Italy'' RETURN sum(CASE WHEN t2.IsOfficial = ''F'' THEN 1 ELSE 0 END)') USING utf8mb4), '$[*]' COLUMNS(sumCASE INT PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE t1.Name = ''Italy'' RETURN sum(CASE WHEN t2.IsOfficial = ''F'' THEN 1 ELSE 0 END)')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "sumCASE"
+      ],
+      [
+        0
+      ]
+    ]
+  },
+  {
+    "question": "What city in Russia has the least population?",
+    "sql": "SELECT graph.Name FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:City) WHERE t1.Name = ''Russian Federation'' RETURN t2.Name ORDER BY t2.Population ASC LIMIT 1') USING utf8mb4), '$[*]' COLUMNS(Name VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:City) WHERE t1.Name = ''Russian Federation'' RETURN t2.Name ORDER BY t2.Population ASC LIMIT 1')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "Name"
+      ],
+      [
+        "Novyi Urengoi"
+      ]
+    ]
+  },
+  {
+    "question": "List all the cities in the country where there is high life expectancy at birth.",
+    "sql": "SELECT graph.Name FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:City) RETURN t2.Name ORDER BY t1.LifeExpectancy DESC LIMIT 1') USING utf8mb4), '$[*]' COLUMNS(Name VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:City) RETURN t2.Name ORDER BY t1.LifeExpectancy DESC LIMIT 1')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "Name"
+      ],
+      [
+        "Andorra la Vella"
+      ]
+    ]
+  },
+  {
+    "question": "List all the official and unofficial languages used by the country that declared its independence in 1830.",
+    "sql": "SELECT graph.Language, graph.IsOfficial FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE t1.IndepYear = 1830 RETURN t2.Language, t2.IsOfficial') USING utf8mb4), '$[*]' COLUMNS(Language INT PATH '$[0]', IsOfficial VARCHAR(255) PATH '$[1]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE t1.IndepYear = 1830 RETURN t2.Language, t2.IsOfficial')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "Language",
+        "IsOfficial"
+      ],
+      [
+        null,
+        null
+      ],
+      [
+        null,
+        null
+      ]
+    ]
+  },
+  {
+    "question": "What is the capital city of the country with largest population?",
+    "sql": "SELECT graph.Capital FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:City) RETURN t1.Capital ORDER BY t1.Population DESC LIMIT 1') USING utf8mb4), '$[*]' COLUMNS(Capital VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:City) RETURN t1.Capital ORDER BY t1.Population DESC LIMIT 1')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "Capital"
+      ],
+      [
+        1891
+      ]
+    ]
+  },
+  {
+    "question": "List all the countries in the continent of Asia that use English as their unofficial language.",
+    "sql": "SELECT graph.Name FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE (t1.Continent = ''Asia'' AND t2.IsOfficial = ''F'') RETURN t1.Name') USING utf8mb4), '$[*]' COLUMNS(Name VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE (t1.Continent = ''Asia'' AND t2.IsOfficial = ''F'') RETURN t1.Name')",
+    "difficulty": "medium",
+    "output": []
+  },
+  {
+    "question": "Calculate the average GNP of all countries that use Arabic language.",
+    "sql": "SELECT graph.GNP FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE t2.Language = ''Arabic'' RETURN avg(t1.GNP)') USING utf8mb4), '$[*]' COLUMNS(GNP DOUBLE PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE t2.Language = ''Arabic'' RETURN avg(t1.GNP)')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "GNP"
+      ],
+      [
+        null
+      ]
+    ]
+  },
+  {
+    "question": "Which country has the smallest surface area?",
+    "sql": "SELECT graph.Name FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (country:Country) RETURN country.Name AS Name ORDER BY country.SurfaceArea ASC LIMIT 1') USING utf8mb4), '$[*]' COLUMNS(Name INT PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (country:Country) RETURN country.Name AS Name ORDER BY country.SurfaceArea ASC LIMIT 1')",
+    "difficulty": "easy",
+    "output": [
+      [
+        "Name"
+      ],
+      [
+        null
+      ]
+    ]
+  },
+  {
+    "question": "Write down the name of the largest population country.",
+    "sql": "SELECT graph.Name FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (country:Country) RETURN country.Name AS Name ORDER BY country.Population DESC LIMIT 1') USING utf8mb4), '$[*]' COLUMNS(Name INT PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (country:Country) RETURN country.Name AS Name ORDER BY country.Population DESC LIMIT 1')",
+    "difficulty": "easy",
+    "output": [
+      [
+        "Name"
+      ],
+      [
+        null
+      ]
+    ]
+  },
+  {
+    "question": "What is the language of the smallest population country?",
+    "sql": "SELECT graph.Language FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) RETURN t2.Language ORDER BY t1.Population ASC LIMIT 1') USING utf8mb4), '$[*]' COLUMNS(Language INT PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) RETURN t2.Language ORDER BY t1.Population ASC LIMIT 1')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "Language"
+      ],
+      [
+        null
+      ]
+    ]
+  },
+  {
+    "question": "List down the name of countries whereby English is their official language.",
+    "sql": "SELECT graph.Name FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE (t2.Language = ''English'' AND t2.IsOfficial = ''T'') RETURN t1.Name') USING utf8mb4), '$[*]' COLUMNS(Name VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE (t2.Language = ''English'' AND t2.IsOfficial = ''T'') RETURN t1.Name')",
+    "difficulty": "medium",
+    "output": []
+  },
+  {
+    "question": "List down the official language of the countries which declared independence after 1990,",
+    "sql": "SELECT graph.Name, graph.Language FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE (t1.IndepYear > 1990 AND t2.IsOfficial = ''T'') RETURN t1.Name, t2.Language') USING utf8mb4), '$[*]' COLUMNS(Name VARCHAR(255) PATH '$[0]', Language INT PATH '$[1]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE (t1.IndepYear > 1990 AND t2.IsOfficial = ''T'') RETURN t1.Name, t2.Language')",
+    "difficulty": "medium",
+    "output": []
+  },
+  {
+    "question": "List down languages used in Malaysia.",
+    "sql": "SELECT graph.Language FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE t1.Name = ''Malaysia'' RETURN t2.Language') USING utf8mb4), '$[*]' COLUMNS(Language INT PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE t1.Name = ''Malaysia'' RETURN t2.Language')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "Language"
+      ],
+      [
+        null
+      ]
+    ]
+  },
+  {
+    "question": "Which country has the most crowded city in the world?",
+    "sql": "SELECT graph.Name FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:City) RETURN t1.Name ORDER BY t2.Population DESC LIMIT 1') USING utf8mb4), '$[*]' COLUMNS(Name VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:City) RETURN t1.Name ORDER BY t2.Population DESC LIMIT 1')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "Name"
+      ],
+      [
+        "India"
+      ]
+    ]
+  },
+  {
+    "question": "What is the average life expentancy of countries that speak Arabic?",
+    "sql": "SELECT graph.LifeExpectancy FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE t2.Language = ''Arabic'' RETURN avg(t1.LifeExpectancy)') USING utf8mb4), '$[*]' COLUMNS(LifeExpectancy DOUBLE PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:Country)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE t2.Language = ''Arabic'' RETURN avg(t1.LifeExpectancy)')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "LifeExpectancy"
+      ],
+      [
+        null
+      ]
+    ]
+  },
+  {
+    "question": "What city has the highest population?",
+    "sql": "SELECT graph.Name FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (city:City) RETURN city.Name AS Name ORDER BY city.Population DESC LIMIT 1') USING utf8mb4), '$[*]' COLUMNS(Name VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (city:City) RETURN city.Name AS Name ORDER BY city.Population DESC LIMIT 1')",
+    "difficulty": "easy",
+    "output": [
+      [
+        "Name"
+      ],
+      [
+        "Mumbai (Bombay)"
+      ]
+    ]
+  },
+  {
+    "question": "What country has the largest surface area?",
+    "sql": "SELECT graph.Name FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (country:Country) RETURN country.Name AS Name ORDER BY country.SurfaceArea DESC LIMIT 1') USING utf8mb4), '$[*]' COLUMNS(Name INT PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (country:Country) RETURN country.Name AS Name ORDER BY country.SurfaceArea DESC LIMIT 1')",
+    "difficulty": "easy",
+    "output": [
+      [
+        "Name"
+      ],
+      [
+        null
+      ]
+    ]
+  },
+  {
+    "question": "How many countries have a life expectancy of 75.1?",
+    "sql": "SELECT graph.count FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (country:Country) WHERE country.LifeExpectancy = 75.1 RETURN count(*)') USING utf8mb4), '$[*]' COLUMNS(count INT PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (country:Country) WHERE country.LifeExpectancy = 75.1 RETURN count(*)')",
+    "difficulty": "easy",
+    "output": [
+      [
+        "count"
+      ],
+      [
+        2
+      ]
+    ]
+  },
+  {
+    "question": "What is the year of independence of Brunei?",
+    "sql": "SELECT graph.IndepYear FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (country:Country) WHERE country.Name = ''Brunei'' RETURN country.IndepYear AS IndepYear') USING utf8mb4), '$[*]' COLUMNS(IndepYear INT PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (country:Country) WHERE country.Name = ''Brunei'' RETURN country.IndepYear AS IndepYear')",
+    "difficulty": "easy",
+    "output": [
+      [
+        "IndepYear"
+      ],
+      [
+        1984
+      ]
+    ]
+  },
+  {
+    "question": "How many countries have no GNP?",
+    "sql": "SELECT graph.count FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (country:Country) WHERE country.GNP = 0 RETURN count(*)') USING utf8mb4), '$[*]' COLUMNS(count INT PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (country:Country) WHERE country.GNP = 0 RETURN count(*)')",
+    "difficulty": "easy",
+    "output": [
+      [
+        "count"
+      ],
+      [
+        24
+      ]
+    ]
+  },
+  {
+    "question": "What is the average surface area of all countries?",
+    "sql": "SELECT graph.SurfaceArea FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (country:Country) RETURN avg(country.SurfaceArea)') USING utf8mb4), '$[*]' COLUMNS(SurfaceArea DOUBLE PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (country:Country) RETURN avg(country.SurfaceArea)')",
+    "difficulty": "easy",
+    "output": [
+      [
+        "SurfaceArea"
+      ],
+      [
+        623248.1460251047
+      ]
+    ]
+  },
+  {
+    "question": "How many languages are there in the country where Tocantins district belongs?",
+    "sql": "SELECT graph.countDISTINCT FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:City)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE t1.District = ''Tocantins'' RETURN count(DISTINCT t2.Language)') USING utf8mb4), '$[*]' COLUMNS(countDISTINCT INT PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:City)<-[countrycode:COUNTRYCODE]-(t2:CountryLanguage) WHERE t1.District = ''Tocantins'' RETURN count(DISTINCT t2.Language)')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "countDISTINCT"
+      ],
+      [
+        0
+      ]
+    ]
+  },
+  {
+    "question": "How many cities are there in the country ruled by Kostis Stefanopoulos?",
+    "sql": "SELECT graph.countDISTINCT FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:City)<-[code:CODE]-(t2:Country) WHERE t2.HeadOfState = ''Kostis Stefanopoulos'' RETURN count(DISTINCT t1.Name)') USING utf8mb4), '$[*]' COLUMNS(countDISTINCT INT PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:City)<-[code:CODE]-(t2:Country) WHERE t2.HeadOfState = ''Kostis Stefanopoulos'' RETURN count(DISTINCT t1.Name)')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "countDISTINCT"
+      ],
+      [
+        0
+      ]
+    ]
+  },
+  {
+    "question": "What is the life expectancy of the countries that uses Japanese as their language?",
+    "sql": "SELECT graph.LifeExpectancy FROM JSON_TABLE(CONVERT(frogql_traverse('world', 'MATCH (t1:CountryLanguage)<-[code:CODE]-(t2:Country) WHERE t1.Language = ''Japanese'' RETURN avg(t2.LifeExpectancy)') USING utf8mb4), '$[*]' COLUMNS(LifeExpectancy DOUBLE PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('world', 'MATCH (t1:CountryLanguage)<-[code:CODE]-(t2:Country) WHERE t1.Language = ''Japanese'' RETURN avg(t2.LifeExpectancy)')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "LifeExpectancy"
+      ],
+      [
+        null
+      ]
+    ]
+  }
+]

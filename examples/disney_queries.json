@@ -1,0 +1,637 @@
+[
+  {
+    "question": "Register the database",
+    "sql": "SELECT frogql_register_database('disney', '/home/maxdemarzi/vsql-frogql/examples/disney.gdb')",
+    "output": [
+      [
+        "frogql_register_database('disney', '/home/maxdemarzi/vsql-frogql/examples/disney.gdb')"
+      ],
+      [
+        "OK"
+      ]
+    ]
+  },
+  {
+    "question": "Who is the director of the movie Pinocchio?",
+    "sql": "SELECT graph.director FROM JSON_TABLE(CONVERT(frogql_traverse('disney', 'MATCH (director:director) WHERE director.name = ''Pinocchio'' RETURN director') USING utf8mb4), '$[*]' COLUMNS(director VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('disney', 'MATCH (director:director) WHERE director.name = ''Pinocchio'' RETURN director')",
+    "difficulty": "easy",
+    "output": [
+      [
+        "director"
+      ],
+      [
+        57
+      ]
+    ]
+  },
+  {
+    "question": "The song \"Once Upon a Dream\" is associated with the movie directed by whom?",
+    "sql": "SELECT graph.director FROM JSON_TABLE(CONVERT(frogql_traverse('disney', 'MATCH (t1:characters)<-[name:NAME]-(t2:director) WHERE t1.song = ''Once Upon a Dream'' RETURN t2.director') USING utf8mb4), '$[*]' COLUMNS(director VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('disney', 'MATCH (t1:characters)<-[name:NAME]-(t2:director) WHERE t1.song = ''Once Upon a Dream'' RETURN t2.director')",
+    "difficulty": "hard",
+    "output": [
+      [
+        "director"
+      ],
+      [
+        "Clyde Geronimi"
+      ]
+    ]
+  },
+  {
+    "question": "Who is the villain of the movie \"Beauty and the Beast\"?",
+    "sql": "SELECT graph.villian FROM JSON_TABLE(CONVERT(frogql_traverse('disney', 'MATCH (characters:characters) WHERE characters.movie_title = ''Beauty and the Beast'' RETURN characters.villian AS villian') USING utf8mb4), '$[*]' COLUMNS(villian VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('disney', 'MATCH (characters:characters) WHERE characters.movie_title = ''Beauty and the Beast'' RETURN characters.villian AS villian')",
+    "difficulty": "easy",
+    "output": [
+      [
+        "villian"
+      ],
+      [
+        "Gaston"
+      ]
+    ]
+  },
+  {
+    "question": "Which movie is the character Robin Hood in?",
+    "sql": "SELECT graph.movie_title FROM JSON_TABLE(CONVERT(frogql_traverse('disney', 'MATCH (characters:characters) WHERE characters.hero = ''Robin Hood'' RETURN characters.movie_title AS movie_title') USING utf8mb4), '$[*]' COLUMNS(movie_title VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('disney', 'MATCH (characters:characters) WHERE characters.hero = ''Robin Hood'' RETURN characters.movie_title AS movie_title')",
+    "difficulty": "easy",
+    "output": [
+      [
+        "movie_title"
+      ],
+      [
+        "Robin Hood"
+      ]
+    ]
+  },
+  {
+    "question": "Give the name of the movie which the song \"I Thought I Lost You\" is associated with.",
+    "sql": "SELECT graph.movie_title FROM JSON_TABLE(CONVERT(frogql_traverse('disney', 'MATCH (characters:characters) WHERE characters.song = ''I Thought I Lost You'' RETURN characters.movie_title AS movie_title') USING utf8mb4), '$[*]' COLUMNS(movie_title VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('disney', 'MATCH (characters:characters) WHERE characters.song = ''I Thought I Lost You'' RETURN characters.movie_title AS movie_title')",
+    "difficulty": "easy",
+    "output": [
+      [
+        "movie_title"
+      ],
+      [
+        "Bolt"
+      ]
+    ]
+  },
+  {
+    "question": "How much is the total gross of the movie with a song titled \"Little Wonders\"?",
+    "sql": "SELECT graph.total_gross FROM JSON_TABLE(CONVERT(frogql_traverse('disney', 'MATCH (t1:movies_total_gross)-[movie_title:MOVIE_TITLE]->(t2:characters) WHERE t2.song = ''Little Wonders'' RETURN t1.total_gross') USING utf8mb4), '$[*]' COLUMNS(total_gross VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('disney', 'MATCH (t1:movies_total_gross)-[movie_title:MOVIE_TITLE]->(t2:characters) WHERE t2.song = ''Little Wonders'' RETURN t1.total_gross')",
+    "difficulty": "hard",
+    "output": [
+      [
+        "total_gross"
+      ],
+      [
+        "$97,822,171"
+      ]
+    ]
+  },
+  {
+    "question": "What is the Motion Picture Association of America rating for the movie featuring a villain named Turbo?",
+    "sql": "SELECT graph.MPAA_rating FROM JSON_TABLE(CONVERT(frogql_traverse('disney', 'MATCH (t1:movies_total_gross)-[movie_title:MOVIE_TITLE]->(t2:characters) WHERE t2.villian = ''Turbo'' RETURN t1.MPAA_rating') USING utf8mb4), '$[*]' COLUMNS(MPAA_rating VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('disney', 'MATCH (t1:movies_total_gross)-[movie_title:MOVIE_TITLE]->(t2:characters) WHERE t2.villian = ''Turbo'' RETURN t1.MPAA_rating')",
+    "difficulty": "hard",
+    "output": [
+      [
+        "MPAA_rating"
+      ],
+      [
+        "PG"
+      ]
+    ]
+  },
+  {
+    "question": "How many PG adventure movies did Ron Clements direct?",
+    "sql": "SELECT graph.count FROM JSON_TABLE(CONVERT(frogql_traverse('disney', 'MATCH (t1:director)<-[movie_title:MOVIE_TITLE]-(t2:movies_total_gross) WHERE (t1.director = ''Ron Clements'' AND t2.MPAA_rating = ''PG'' AND t2.genre = ''Adventure'') RETURN count(*)') USING utf8mb4), '$[*]' COLUMNS(count INT PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('disney', 'MATCH (t1:director)<-[movie_title:MOVIE_TITLE]-(t2:movies_total_gross) WHERE (t1.director = ''Ron Clements'' AND t2.MPAA_rating = ''PG'' AND t2.genre = ''Adventure'') RETURN count(*)')",
+    "difficulty": "hard",
+    "output": [
+      [
+        "count"
+      ],
+      [
+        0
+      ]
+    ]
+  },
+  {
+    "question": "How many horror movies are there?",
+    "sql": "SELECT graph.movie_title FROM JSON_TABLE(CONVERT(frogql_traverse('disney', 'MATCH (movies_total_gross:movies_total_gross) WHERE movies_total_gross.genre = ''Horror'' RETURN count(movies_total_gross.movie_title)') USING utf8mb4), '$[*]' COLUMNS(movie_title INT PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('disney', 'MATCH (movies_total_gross:movies_total_gross) WHERE movies_total_gross.genre = ''Horror'' RETURN count(movies_total_gross.movie_title)')",
+    "difficulty": "easy",
+    "output": [
+      [
+        "movie_title"
+      ],
+      [
+        6
+      ]
+    ]
+  },
+  {
+    "question": "Who is the villain in the movie \"The Great Mouse Detective\"?",
+    "sql": "SELECT graph.villian FROM JSON_TABLE(CONVERT(frogql_traverse('disney', 'MATCH (characters:characters) WHERE characters.movie_title = ''The Great Mouse Detective'' RETURN characters.villian AS villian') USING utf8mb4), '$[*]' COLUMNS(villian VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('disney', 'MATCH (characters:characters) WHERE characters.movie_title = ''The Great Mouse Detective'' RETURN characters.villian AS villian')",
+    "difficulty": "easy",
+    "output": [
+      [
+        "villian"
+      ],
+      [
+        "Professor Ratigan"
+      ]
+    ]
+  },
+  {
+    "question": "Which director has made the most movies?",
+    "sql": "SELECT graph.director, graph.name FROM JSON_TABLE(CONVERT(frogql_traverse('disney', 'MATCH (director:director) GROUP BY director RETURN director, count(director.name) ORDER BY count(director.name) DESC LIMIT 1') USING utf8mb4), '$[*]' COLUMNS(director VARCHAR(255) PATH '$[0]', name INT PATH '$[1]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('disney', 'MATCH (director:director) GROUP BY director RETURN director, count(director.name) ORDER BY count(director.name) DESC LIMIT 1')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "director",
+        "name"
+      ],
+      [
+        56,
+        1
+      ]
+    ]
+  },
+  {
+    "question": "Who are the voice actors for all the heroes?",
+    "sql": "SELECT graph.voice_actor FROM JSON_TABLE(CONVERT(frogql_traverse('disney', 'MATCH (t1:characters)-[hero:HERO]->(t2:voice_actors) WHERE t2.movie = t1.movie_title RETURN t2.voice_actor') USING utf8mb4), '$[*]' COLUMNS(voice_actor VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('disney', 'MATCH (t1:characters)-[hero:HERO]->(t2:voice_actors) WHERE t2.movie = t1.movie_title RETURN t2.voice_actor')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "voice_actor"
+      ],
+      [
+        "Adriana Caselotti"
+      ],
+      [
+        "Dickie Jones"
+      ],
+      [
+        "None"
+      ],
+      [
+        "Donnie Dunagan"
+      ],
+      [
+        "Ilene Woods"
+      ],
+      [
+        "Kathryn Beaumont"
+      ],
+      [
+        "Bobby Driscoll"
+      ],
+      [
+        "Mary Costa"
+      ],
+      [
+        "Bruce Reitherman"
+      ],
+      [
+        "Brian Bedford"
+      ],
+      [
+        "Grant Bardsley"
+      ],
+      [
+        "Joey Lawrence"
+      ],
+      [
+        "Jodi Benson"
+      ],
+      [
+        "Paige O'Hara"
+      ],
+      [
+        "Scott Weinger; Brad Kane"
+      ],
+      [
+        "Jonathan Taylor Thomas"
+      ],
+      [
+        "Irene Bedard; Judy Kuhn"
+      ],
+      [
+        "Tom Hulce"
+      ],
+      [
+        "Tate Donovan; Joshua Keaton"
+      ],
+      [
+        "Ming-Na Wen; Lea Salonga"
+      ],
+      [
+        "Tony Goldwyn"
+      ],
+      [
+        "D. B. Sweeney"
+      ],
+      [
+        "David Spade"
+      ],
+      [
+        "Michael J. Fox"
+      ],
+      [
+        "Joseph Gordon-Levitt"
+      ],
+      [
+        "Joaquin Phoenix"
+      ],
+      [
+        "Roseanne Barr"
+      ],
+      [
+        "Jordan Fry"
+      ],
+      [
+        "John Travolta"
+      ],
+      [
+        "Anika Noni Rose"
+      ],
+      [
+        "Mandy Moore"
+      ],
+      [
+        "Idina Menzel"
+      ],
+      [
+        "Ginnifer Goodwin"
+      ]
+    ]
+  },
+  {
+    "question": "Who voiced the villain in \"The Rescuers\"?",
+    "sql": "SELECT graph.voice_actor FROM JSON_TABLE(CONVERT(frogql_traverse('disney', 'MATCH (t1:voice_actors)-[movie:MOVIE]->(t2:characters) WHERE (t2.movie_title = ''The Rescuers'' AND t1.character = t2.villian) RETURN t1.voice_actor') USING utf8mb4), '$[*]' COLUMNS(voice_actor VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('disney', 'MATCH (t1:voice_actors)-[movie:MOVIE]->(t2:characters) WHERE (t2.movie_title = ''The Rescuers'' AND t1.character = t2.villian) RETURN t1.voice_actor')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "voice_actor"
+      ],
+      [
+        "Geraldine Page"
+      ]
+    ]
+  },
+  {
+    "question": "List the directors of movies that feature a song.",
+    "sql": "SELECT graph.director FROM JSON_TABLE(CONVERT(frogql_traverse('disney', 'MATCH (t1:characters)<-[name:NAME]-(t2:director) WHERE t1.song IS NOT NULL RETURN t2.director') USING utf8mb4), '$[*]' COLUMNS(director VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('disney', 'MATCH (t1:characters)<-[name:NAME]-(t2:director) WHERE t1.song IS NOT NULL RETURN t2.director')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "director"
+      ],
+      [
+        "David Hand"
+      ],
+      [
+        "Ben Sharpsteen"
+      ],
+      [
+        "Ben Sharpsteen"
+      ],
+      [
+        "David Hand"
+      ],
+      [
+        "Jack Kinney"
+      ],
+      [
+        "Clyde Geronimi"
+      ],
+      [
+        "Jack Kinney"
+      ],
+      [
+        "Wilfred Jackson"
+      ],
+      [
+        "Clyde Geronimi"
+      ],
+      [
+        "Hamilton Luske"
+      ],
+      [
+        "Hamilton Luske"
+      ],
+      [
+        "Clyde Geronimi"
+      ],
+      [
+        "Wolfgang Reitherman"
+      ],
+      [
+        "Wolfgang Reitherman"
+      ],
+      [
+        "Wolfgang Reitherman"
+      ],
+      [
+        "Wolfgang Reitherman"
+      ],
+      [
+        "Wolfgang Reitherman"
+      ],
+      [
+        "Wolfgang Reitherman"
+      ],
+      [
+        "Art Stevens"
+      ],
+      [
+        "Ron Clements"
+      ],
+      [
+        "George Scribner"
+      ],
+      [
+        "Ron Clements"
+      ],
+      [
+        "Gary Trousdale"
+      ],
+      [
+        "Ron Clements"
+      ],
+      [
+        "Roger Allers"
+      ],
+      [
+        "Mike Gabriel"
+      ],
+      [
+        "Gary Trousdale"
+      ],
+      [
+        "Ron Clements"
+      ],
+      [
+        "Barry Cook"
+      ],
+      [
+        "Chris Buck"
+      ],
+      [
+        "Mark Dindal"
+      ],
+      [
+        "Gary Trousdale"
+      ],
+      [
+        "Chris Sanders"
+      ],
+      [
+        "Ron Clements"
+      ],
+      [
+        "Robert Walker"
+      ],
+      [
+        "Stephen J. Anderson"
+      ],
+      [
+        "Chris Williams"
+      ],
+      [
+        "Ron Clements"
+      ],
+      [
+        "Nathan Greno"
+      ],
+      [
+        "Stephen J. Anderson"
+      ],
+      [
+        "Rich Moore"
+      ],
+      [
+        "Chris Buck"
+      ],
+      [
+        "Don Hall"
+      ],
+      [
+        "Byron Howard"
+      ],
+      [
+        "Ron Clements"
+      ]
+    ]
+  },
+  {
+    "question": "List the PG-13 romantic comedy movie titles and their release dates.",
+    "sql": "SELECT graph.movie_title, graph.release_date FROM JSON_TABLE(CONVERT(frogql_traverse('disney', 'MATCH (movies_total_gross:movies_total_gross) WHERE (movies_total_gross.MPAA_rating = ''PG-13'' AND movies_total_gross.genre = ''Romantic Comedy'') RETURN movies_total_gross.movie_title AS movie_title, movies_total_gross.release_date AS release_date') USING utf8mb4), '$[*]' COLUMNS(movie_title VARCHAR(255) PATH '$[0]', release_date VARCHAR(255) PATH '$[1]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('disney', 'MATCH (movies_total_gross:movies_total_gross) WHERE (movies_total_gross.MPAA_rating = ''PG-13'' AND movies_total_gross.genre = ''Romantic Comedy'') RETURN movies_total_gross.movie_title AS movie_title, movies_total_gross.release_date AS release_date')",
+    "difficulty": "easy",
+    "output": [
+      [
+        "movie_title",
+        "release_date"
+      ],
+      [
+        "Green Card",
+        "Dec 25, 1990"
+      ],
+      [
+        "Aspen Extreme",
+        "Jan 22, 1993"
+      ],
+      [
+        "Miami Rhapsody",
+        "Jan 27, 1995"
+      ],
+      [
+        "Mr. Wrong",
+        "Feb 16, 1996"
+      ],
+      [
+        "Two Much",
+        "Mar 15, 1996"
+      ],
+      [
+        "Six Days, Seven Nights",
+        "Jun 12, 1998"
+      ],
+      [
+        "The Other Sister",
+        "Feb 26, 1999"
+      ],
+      [
+        "Ten Things I Hate About You",
+        "Mar 31, 1999"
+      ],
+      [
+        "Keeping the Faith",
+        "Apr 14, 2000"
+      ],
+      [
+        "Dan in Real Life",
+        "Oct 20, 2007"
+      ],
+      [
+        "The Proposal",
+        "Jun 19, 2009"
+      ],
+      [
+        "When in Rome",
+        "Jan 29, 2010"
+      ]
+    ]
+  },
+  {
+    "question": "List the movie titles and associated songs directed by Ron Clements.",
+    "sql": "SELECT graph.movie_title, graph.song FROM JSON_TABLE(CONVERT(frogql_traverse('disney', 'MATCH (t1:characters)<-[name:NAME]-(t2:director) WHERE t2.director = ''Ron Clements'' RETURN t1.movie_title, t1.song') USING utf8mb4), '$[*]' COLUMNS(movie_title VARCHAR(255) PATH '$[0]', song VARCHAR(255) PATH '$[1]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('disney', 'MATCH (t1:characters)<-[name:NAME]-(t2:director) WHERE t2.director = ''Ron Clements'' RETURN t1.movie_title, t1.song')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "movie_title",
+        "song"
+      ],
+      [
+        "The Great Mouse Detective",
+        "The World's Greatest Criminal Mind"
+      ],
+      [
+        "The Little Mermaid",
+        "Under the Sea"
+      ],
+      [
+        "Aladdin",
+        "A Whole New World"
+      ],
+      [
+        "Hercules",
+        "Go the Distance"
+      ],
+      [
+        "Treasure Planet",
+        "I'm Still Here"
+      ],
+      [
+        "The Princess and the Frog",
+        "Almost There"
+      ],
+      [
+        "Moana",
+        "How Far I'll Go"
+      ]
+    ]
+  },
+  {
+    "question": "Which movies had the main character named Donald Duck and who directed them?",
+    "sql": "SELECT graph.movie_title, graph.director FROM JSON_TABLE(CONVERT(frogql_traverse('disney', 'MATCH (t1:characters)<-[name:NAME]-(t2:director) WHERE t1.hero = ''Donald Duck'' RETURN t1.movie_title, t2.director') USING utf8mb4), '$[*]' COLUMNS(movie_title VARCHAR(255) PATH '$[0]', director VARCHAR(255) PATH '$[1]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('disney', 'MATCH (t1:characters)<-[name:NAME]-(t2:director) WHERE t1.hero = ''Donald Duck'' RETURN t1.movie_title, t2.director')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "movie_title",
+        "director"
+      ],
+      [
+        "Saludos Amigos",
+        "Jack Kinney"
+      ],
+      [
+        "The Three Caballeros",
+        "Norman Ferguson"
+      ]
+    ]
+  },
+  {
+    "question": "Describe the hero, director, and the release date of Mulan.",
+    "sql": "SELECT graph.hero, graph.director, graph.release_date FROM JSON_TABLE(CONVERT(frogql_traverse('disney', 'MATCH (t1:characters)<-[name:NAME]-(t2:director) WHERE t1.movie_title = ''Mulan'' RETURN t1.hero, t2.director, t1.release_date') USING utf8mb4), '$[*]' COLUMNS(hero VARCHAR(255) PATH '$[0]', director VARCHAR(255) PATH '$[1]', release_date VARCHAR(255) PATH '$[2]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('disney', 'MATCH (t1:characters)<-[name:NAME]-(t2:director) WHERE t1.movie_title = ''Mulan'' RETURN t1.hero, t2.director, t1.release_date')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "hero",
+        "director",
+        "release_date"
+      ],
+      [
+        "Mulan",
+        "Barry Cook",
+        "19-Jun-98"
+      ]
+    ]
+  },
+  {
+    "question": "Provide the director's name of Wreck-It Ralph movie.",
+    "sql": "SELECT graph.director FROM JSON_TABLE(CONVERT(frogql_traverse('disney', 'MATCH (director:director) WHERE director.name = ''Wreck-It Ralph'' RETURN director') USING utf8mb4), '$[*]' COLUMNS(director VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('disney', 'MATCH (director:director) WHERE director.name = ''Wreck-It Ralph'' RETURN director')",
+    "difficulty": "easy",
+    "output": [
+      [
+        "director"
+      ],
+      [
+        107
+      ]
+    ]
+  },
+  {
+    "question": "Provide the name of the song from the movie directed by Ben Sharpsteen.",
+    "sql": "SELECT graph.song FROM JSON_TABLE(CONVERT(frogql_traverse('disney', 'MATCH (t1:characters)<-[name:NAME]-(t2:director) WHERE t2.director = ''Ben Sharpsteen'' RETURN t1.song') USING utf8mb4), '$[*]' COLUMNS(song VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('disney', 'MATCH (t1:characters)<-[name:NAME]-(t2:director) WHERE t2.director = ''Ben Sharpsteen'' RETURN t1.song')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "song"
+      ],
+      [
+        "When You Wish upon a Star"
+      ],
+      [
+        "Baby Mine"
+      ]
+    ]
+  },
+  {
+    "question": "Indicate the release date of the film The Lion King directed by Roger Allers.",
+    "sql": "SELECT graph.release_date FROM JSON_TABLE(CONVERT(frogql_traverse('disney', 'MATCH (t1:characters)<-[name:NAME]-(t2:director) WHERE (t2.director = ''Roger Allers'' AND t1.movie_title = ''The Lion King'') RETURN t1.release_date') USING utf8mb4), '$[*]' COLUMNS(release_date VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('disney', 'MATCH (t1:characters)<-[name:NAME]-(t2:director) WHERE (t2.director = ''Roger Allers'' AND t1.movie_title = ''The Lion King'') RETURN t1.release_date')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "release_date"
+      ],
+      [
+        "24-Jun-94"
+      ]
+    ]
+  },
+  {
+    "question": "Which movies of director Wolfgang Reitherman do not have villain?",
+    "sql": "SELECT graph.movie_title FROM JSON_TABLE(CONVERT(frogql_traverse('disney', 'MATCH (t1:characters)<-[name:NAME]-(t2:director) WHERE (t2.director = ''Wolfgang Reitherman'' AND t1.villian IS NULL) RETURN t1.movie_title') USING utf8mb4), '$[*]' COLUMNS(movie_title VARCHAR(255) PATH '$[0]')) AS graph",
+    "sql_json": "SELECT frogql_traverse('disney', 'MATCH (t1:characters)<-[name:NAME]-(t2:director) WHERE (t2.director = ''Wolfgang Reitherman'' AND t1.villian IS NULL) RETURN t1.movie_title')",
+    "difficulty": "medium",
+    "output": [
+      [
+        "movie_title"
+      ],
+      [
+        "The Many Adventures of Winnie the Pooh"
+      ]
+    ]
+  }
+]

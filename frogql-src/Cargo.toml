@@ -1,0 +1,68 @@
+[package]
+name = "gqlrust"
+version = "0.1.0"
+edition = "2021"
+
+[features]
+# Defaults keep `cargo build` and CI behaviour identical to before.
+# The Python crate (`python/`) opts out via `default-features = false`
+# so the wheel doesn't drag in REPL / bench dependencies (notably
+# `ring` via `ureq`, which fails to cross-compile on manylinux2014).
+default = ["repl", "bench"]
+repl = ["dep:rustyline"]
+bench = ["dep:sysinfo", "dep:toml", "dep:ureq", "dep:zstd", "dep:tar", "dep:sha2"]
+
+[dependencies]
+serde = { version = "1", features = ["derive", "rc"] }
+serde_json = "1"
+thiserror = "2"
+rustyline = { version = "15", optional = true }
+# sysinfo: cross-platform RSS reading for the LDBC bench's
+# Memory vs Lazy vs Disk RAM-cost comparison.
+sysinfo = { version = "0.30", optional = true }
+# toml: per-IC query definitions in `bench/ldbc-queries/`.
+# Multiline strings in TOML are nicer than JSON for spec-quoted
+# query text. Used only by `src/bin/ldbc_bench.rs`.
+toml = { version = "0.8", optional = true }
+# Used by `src/bin/bench_setup.rs` to download + extract the LDBC
+# dataset and substitution-params archives. ureq is a small blocking
+# HTTP client (no async, no executor); zstd + tar handle the
+# `.tar.zst` archives LDBC ships.
+ureq = { version = "2.12", default-features = false, features = ["tls"], optional = true }
+zstd = { version = "0.13", optional = true }
+tar = { version = "0.4", optional = true }
+# sha2: per-row content hashing in `ldbc_bench` so the cross-system
+# bench can verify row-content equivalence across systems (with
+# ORDER BY in every IC's toml, results are deterministic).
+sha2 = { version = "0.10", optional = true }
+
+[dev-dependencies]
+proptest = "1"
+
+# Bins that need optional deps. Auto-discovery still picks up the
+# remaining bins (bench_queries, bench_repeat, convert_edgelist,
+# internal_bench) which use only the always-on dependencies.
+[[bin]]
+name = "frogql"
+path = "src/bin/frogql.rs"
+required-features = ["repl"]
+
+[[bin]]
+name = "bench_setup"
+path = "src/bin/bench_setup.rs"
+required-features = ["bench"]
+
+[[bin]]
+name = "ldbc_bench"
+path = "src/bin/ldbc_bench.rs"
+required-features = ["bench"]
+
+[workspace]
+members = [".", "python", "node", "wasm"]
+# resolver = "2" computes features per-target instead of unifying them
+# globally across the workspace. Without it, building the python crate
+# with --target X drags in gqlrust's default features (repl, bench)
+# even though python/Cargo.toml sets default-features = false on
+# gqlrust — which pulls ring (via ureq) and breaks aarch64
+# cross-builds inside the manylinux2014 container.
+resolver = "2"

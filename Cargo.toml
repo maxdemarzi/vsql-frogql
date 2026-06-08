@@ -1,0 +1,18 @@
+[package]
+name = "vsql_frogql"
+version = "0.1.0"
+edition = "2021"
+description = "frogQL graph database engine bridge for VillageSQL in Rust"
+license = "GPL-2.0"
+
+[lib]
+crate-type = ["cdylib"]
+
+[[bin]]
+name = "test_frogql"
+path = "src/bin/test_frogql.rs"
+
+[dependencies]
+villagesql = { path = "/home/maxdemarzi/build/vsql-rust-sdk/villagesql" }
+gqlrust = { path = "./frogql-src" }
+serde_json = "1.0"
