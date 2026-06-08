@@ -28,7 +28,7 @@ To build the extension:
 2. Run `build.sh`:
 
 ```bash
-export VillageSQL_BUILD_DIR=/home/maxdemarzi/build/villagesql
+export VillageSQL_BUILD_DIR=~/build/villagesql
 ./build.sh
 ```
 
@@ -184,6 +184,6 @@ SELECT frogql_traverse('disney', 'MATCH (t1:characters) RETURN t1.movie_title LI
 An integration test suite is included under `mysql-test`. You can execute it using the MySQL Test Runner (MTR) from your VillageSQL build folder:
 
 ```bash
-cd /home/maxdemarzi/build/villagesql
-./mysql-test/mysql-test-run.pl --suite=/home/maxdemarzi/vsql-frogql/mysql-test
+cd ~/build/villagesql
+./mysql-test/mysql-test-run.pl --suite ~/vsql-frogql/mysql-test
 ```
