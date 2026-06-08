@@ -2,3 +2,4 @@
 /build
 /debug.log
 .DS_Store
+/frogql-src
