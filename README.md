@@ -165,16 +165,16 @@ SELECT frogql_register_database('disney', '~/vsql-frogql/examples/disney.gdb');
 ```
 
 ```sql
-SELECT frogql_traverse('disney', 'MATCH (t1:characters) RETURN t1.song LIMIT 3');
+SELECT frogql_traverse('disney', 'MATCH (t1:characters) RETURN t1.movie_title LIMIT 3');
 ```
 
 **Output:**
 ```
-+---------------------------------------------------------------------------+
-| frogql_traverse('disney', 'MATCH (t1:characters) RETURN t1.song LIMIT 3') |
-+---------------------------------------------------------------------------+
-| [["Some Day My Prince Will Come"],["When You Wish upon a Star"],[null]]   |
-+---------------------------------------------------------------------------+
++----------------------------------------------------------------------------------+
+| frogql_traverse('disney', 'MATCH (t1:characters) RETURN t1.movie_title LIMIT 3') |
++----------------------------------------------------------------------------------+
+| [["Snow White and the Seven Dwarfs"],["Pinocchio"],["Fantasia"]]                 |
++----------------------------------------------------------------------------------+
 ```
 
 ---
